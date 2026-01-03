@@ -169,8 +169,30 @@ searchInput.addEventListener("keyup", () => {
     emp.style.display = text.includes(value) ? "block" : "none";
   });
 });
+
+  const logo = localStorage.getItem("companyLogo");
+if (logo) document.getElementById("companyLogo").src = logo;
+
+
+const isPresentToday = true;
+document.getElementById("statusCircle").className =
+  "status-circle " + (isPresentToday ? "bg-success" : "bg-danger");
+
+
+const searchInput = document.getElementById("searchInput");
+const employees = document.querySelectorAll(".emp-item");
+
+searchInput.addEventListener("keyup", () => {
+  const value = searchInput.value.toLowerCase();
+
+  employees.forEach(emp => {
+    const text = emp.getAttribute("data-name");
+    emp.style.display = text.includes(value) ? "block" : "none";
+  });
+});
 </script>
 
 </body>
 </html>
+
 
