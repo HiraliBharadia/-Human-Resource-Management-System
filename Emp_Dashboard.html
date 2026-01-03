@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Employee Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+body{
+  background:#f5f6fa;
+  font-family:"Segoe UI",sans-serif;
+}
+
+/* NAVBAR */
+.navbar{
+  background:#fff;
+  box-shadow:0 2px 10px rgba(0,0,0,.08);
+}
+.nav-link{font-weight:500}
+
+/* STATUS */
+.status-circle{
+  width:14px;
+  height:14px;
+  border-radius:50%;
+}
+
+/* CARDS */
+.card-box{
+  background:#fff;
+  border-radius:14px;
+  padding:20px;
+  box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+/* ACTION CARD */
+.action-card{
+  text-align:center;
+}
+.action-card button{
+  margin-top:10px;
+}
+
+/* QUICK NAV */
+.quick-card{
+  cursor:pointer;
+  transition:.3s;
+}
+.quick-card:hover{
+  transform:translateY(-5px);
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar px-4 d-flex justify-content-between align-items-center">
+
+  <div class="d-flex align-items-center gap-4">
+    <img id="companyLogo" height="36">
+    <span class="fw-semibold">Dashboard</span>
+  </div>
+
+  <div class="d-flex align-items-center gap-3">
+    <span id="employeeName" class="fw-semibold"></span>
+    <div id="statusCircle" class="status-circle"></div>
+  </div>
+
+</nav>
+
+<!-- CONTENT -->
+<div class="container mt-4">
+
+  <!-- PART 1: TODAY STATUS -->
+  <div class="card-box action-card mb-4">
+    <h5 class="fw-semibold mb-2">Today Status</h5>
+    <div class="text-muted mb-2" id="todayDate"></div>
+    <button id="checkBtn" class="btn btn-success px-4">
+      Check In
+    </button>
+  </div>
+
+  <!-- PART 2: QUICK STATS -->
+  <div class="row g-3 mb-4">
+
+    <div class="col-md-4">
+      <div class="card-box text-center">
+        Today Attendance<br>
+        <strong id="todayAttendance" class="text-primary">Not Marked</strong>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card-box text-center">
+        Leaves Used (This Month)<br>
+        <strong class="text-danger">5</strong>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card-box text-center">
+        Remaining Leaves<br>
+        <strong class="text-success">7</strong>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PART 3: QUICK NAV -->
+  <div class="row g-3">
+
+    <div class="col-md-4">
+      <div class="card-box quick-card text-center" onclick="goTo('attendance.html')">
+        <i class="fas fa-calendar-check fs-3 text-primary mb-2"></i><br>
+        Attendance
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card-box quick-card text-center" onclick="goTo('timeoff.html')">
+        <i class="fas fa-plane-departure fs-3 text-primary mb-2"></i><br>
+        Time Off
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card-box quick-card text-center" onclick="goTo('myprofile.html')">
+        <i class="fas fa-user fs-3 text-primary mb-2"></i><br>
+        My Profile
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+/* COMPANY LOGO */
+// const logo = localStorage.getItem("companyLogo");
+// if(logo) document.getElementById("companyLogo").src = logo;
+
+/* EMPLOYEE NAME */
+// const employeeName = localStorage.getItem("employeeName") || "Employee";
+// document.getElementById("employeeName").innerText = employeeName;
+
+/* DATE */
+// document.getElementById("todayDate").innerText =
+//   new Date().toDateString();
+
+/* ATTENDANCE MOCK (DB READY) */
+// let checkedIn = false;
+// const checkBtn = document.getElementById("checkBtn");
+// const statusCircle = document.getElementById("statusCircle");
+// const todayAttendance = document.getElementById("todayAttendance");
+
+// checkBtn.onclick = () => {
+//   checkedIn = !checkedIn;
+
+//   if(checkedIn){
+//     checkBtn.innerText = "Check Out";
+//     checkBtn.className = "btn btn-danger px-4";
+//     statusCircle.className = "status-circle bg-success";
+//     todayAttendance.innerText = "Present";
+//   }else{
+//     checkBtn.innerText = "Check In";
+//     checkBtn.className = "btn btn-success px-4";
+//     statusCircle.className = "status-circle bg-danger";
+//     todayAttendance.innerText = "Not Marked";
+//   }
+// };
+
+/* NAVIGATION */
+// function goTo(page){
+//   window.location.href = page;
+// }
+
+/* COMPANY LOGO */
+const logo = localStorage.getItem("companyLogo");
+if (logo) document.getElementById("companyLogo").src = logo;
+
+/* EMPLOYEE NAME */
+const employeeName = localStorage.getItem("employeeName") || "Employee";
+document.getElementById("employeeName").innerText = employeeName;
+
+/* DATE */
+document.getElementById("todayDate").innerText =
+  new Date().toDateString();
+
+/* ELEMENTS */
+const checkBtn = document.getElementById("checkBtn");
+const statusCircle = document.getElementById("statusCircle");
+const todayAttendance = document.getElementById("todayAttendance");
+
+/* READ STATUS FROM STORAGE */
+function loadStatus() {
+  const checkedIn = localStorage.getItem("checkedIn") === "true";
+
+  if (checkedIn) {
+    checkBtn.innerText = "Check Out";
+    checkBtn.className = "btn btn-danger px-4";
+    statusCircle.className = "status-circle bg-success";
+    todayAttendance.innerText = "Present";
+  } else {
+    checkBtn.innerText = "Check In";
+    checkBtn.className = "btn btn-success px-4";
+    statusCircle.className = "status-circle bg-danger";
+    todayAttendance.innerText = "Not Marked";
+  }
+}
+
+/* BUTTON ACTION */
+checkBtn.onclick = () => {
+  const checkedIn = localStorage.getItem("checkedIn") === "true";
+  localStorage.setItem("checkedIn", !checkedIn);
+  loadStatus();
+};
+
+/* DEFAULT STATUS (FIRST TIME) */
+if (localStorage.getItem("checkedIn") === null) {
+  localStorage.setItem("checkedIn", "false");
+}
+
+/* LOAD ON PAGE OPEN */
+loadStatus();
+
+/* NAVIGATION */
+function goTo(page) {
+  window.location.href = page;
+}
+</script>
+
+
+ </script>
+
+</body>
+</html>
