@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HRMS - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">HRMS</a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text me-3">Welcome, <span id="userName"></span></span>
+                <button class="btn btn-outline-light btn-sm" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 bg-light p-0">
+                <div class="list-group list-group-flush">
+                    <a href="#" class="list-group-item list-group-item-action active" onclick="showSection('dashboard')">Dashboard</a>
+                    <a href="#" class="list-group-item list-group-item-action" onclick="showSection('profile')">Profile</a>
+                    <a href="#" class="list-group-item list-group-item-action" onclick="showSection('attendance')">Attendance</a>
+                    <a href="#" class="list-group-item list-group-item-action" onclick="showSection('leave')">Leave</a>
+                    <div id="adminMenu" style="display:none;">
+                        <a href="#" class="list-group-item list-group-item-action text-warning" onclick="showSection('approvals')">Approvals</a>
+                        <a href="#" class="list-group-item list-group-item-action text-warning" onclick="showSection('employees')">Employees</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 p-4">
+                <!-- Dashboard Section -->
+                <div id="dashboardSection" class="content-section">
+                    <h2>Dashboard</h2>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body">
+                                    <h5>Today's Status</h5>
+                                    <p id="todayStatus">Not Checked In</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-success text-white">
+                                <div class="card-body">
+                                    <h5>Pending Leaves</h5>
+                                    <p id="pendingLeaves">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3" id="adminStats" style="display:none;">
+                            <div class="card bg-warning text-white">
+                                <div class="card-body">
+                                    <h5>Pending Approvals</h5>
+                                    <p id="pendingApprovals">0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Section -->
+                <div id="profileSection" class="content-section" style="display:none;">
+                    <h2>Profile</h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Name:</strong> <span id="profileName"></span></p>
+                                    <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+                                    <p><strong>Department:</strong> <span id="profileDept"></span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Role:</strong> <span id="profileRole"></span></p>
+                                    <p><strong>Join Date:</strong> <span id="profileJoinDate"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance Section -->
+                <div id="attendanceSection" class="content-section" style="display:none;">
+                    <h2>Attendance</h2>
+                    <div class="mb-3">
+                        <button class="btn btn-success me-2" onclick="checkIn()">Check In</button>
+                        <button class="btn btn-danger" onclick="checkOut()">Check Out</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">This Week's Attendance</div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Check In</th>
+                                        <th>Check Out</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="attendanceTable">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leave Section -->
+                <div id="leaveSection" class="content-section" style="display:none;">
+                    <h2>Leave Management</h2>
+                    <button class="btn btn-primary mb-3" onclick="showLeaveForm()">Apply Leave</button>
+                    
+                    <!-- Leave Form -->
+                    <div id="leaveForm" class="card mb-3" style="display:none;">
+                        <div class="card-body">
+                            <form id="leaveApplicationForm">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <input type="date" class="form-control" id="startDate" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="date" class="form-control" id="endDate" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-control" id="leaveType" required>
+                                            <option value="">Select Type</option>
+                                            <option value="sick">Sick Leave</option>
+                                            <option value="casual">Casual Leave</option>
+                                            <option value="annual">Annual Leave</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button type="submit" class="btn btn-success">Apply</button>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <textarea class="form-control" id="leaveReason" placeholder="Reason" rows="2"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Leave History -->
+                    <div class="card">
+                        <div class="card-header">Leave History</div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Reason</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leaveHistory">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Approvals Section -->
+                <div id="approvalsSection" class="content-section" style="display:none;">
+                    <h2>Leave Approvals</h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Type</th>
+                                        <th>Reason</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="approvalsTable">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Employees Section -->
+                <div id="employeesSection" class="content-section" style="display:none;">
+                    <h2>Employee Management</h2>
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Department</th>
+                                        <th>Role</th>
+                                        <th>Join Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="employeesTable">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
