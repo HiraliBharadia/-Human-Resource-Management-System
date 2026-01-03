@@ -85,9 +85,3 @@ A minimal HRMS built with HTML, CSS, JavaScript, and Bootstrap.
 4. **Leave:** Apply for leave and track application status
 5. **Admin:** Approve/reject leave requests and manage employees
 
-## Browser Compatibility
-
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
