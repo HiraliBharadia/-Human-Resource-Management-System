@@ -1,17 +1,150 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HRMS - Human Resource Management System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="style-new.css">
+  <meta charset="UTF-8">
+  <title>Sign In</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f5f6fa;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    .login-box {
+      max-width: 420px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 35px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+
+    .logo-box {
+      background: #eef1f6;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo-box img {
+      max-height: 60px;
+    }
+
+    label {
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .btn-signin {
+      background: #3b41bf;
+      border: none;
+      color: white;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    .btn-signin:hover {
+      background: #2f35a8;
+    }
+
+    .signup-text {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .signup-text a {
+      color: #3b41bf;
+      text-decoration: none;
+      font-weight: 500;
+    }
+  </style>
 </head>
 <body>
-    <script>
-        // Auto-redirect to dashboard
-        window.location.href = 'dashboard.html';
-    </script>
+
+<div class="d-flex justify-content-center align-items-center min-vh-100 px-2">
+  <div class="login-box">
+
+   
+
+    <!-- Login Form -->
+    <form id="loginForm">
+
+      <div class="mb-3">
+        <label>Employee ID / Email</label>
+        <input 
+          type="text" 
+          id="login" 
+          class="form-control" 
+          placeholder="Enter Emp ID or Email"
+          required
+        >
+      </div>
+
+      <div class="mb-4">
+        <label>Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          class="form-control" 
+          placeholder="Enter password"
+          required
+        >
+      </div>
+
+      <button type="submit" class="btn btn-signin w-100">
+        SIGN IN
+      </button>
+
+    </form>
+
+    <div class="signup-text">
+      Don’t have an account?
+      <a href="signup.html">Sign Up</a>
+    </div>
+
+  </div>
+</div>
+<script>
+  const form = document.getElementById("loginForm");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const login = document.getElementById("login").value.trim();
+    const password = document.getElementById("password").value;
+
+    try {
+      const response = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ login, password })
+      });
+
+      const message = await response.text();
+
+      if (response.ok) {
+        // If message is "/dashboard?auth=true", it redirects there
+        window.location.href = message; 
+      } else {
+        alert(message);
+      }
+    } catch (err) {
+      alert("Server error. Check terminal.");
+    }
+  });
+</script>
 </body>
 </html>
