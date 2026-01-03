@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HRMS - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="style-new.css">
+</head>
+<body class="dashboard-body">
+    <!-- Enhanced Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary enhanced-navbar fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-brand-section d-flex align-items-center">
+                <button class="btn btn-link text-white d-lg-none me-2" onclick="toggleMobileSidebar()" id="sidebarToggle">
+                    <i class="bi bi-list fs-4"></i>
+                </button>
+                <a class="navbar-brand d-flex align-items-center" href="#">
+                    <div class="brand-icon">
+                        <i class="bi bi-building-check"></i>
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-title">HRMS</span>
+                        <small class="brand-subtitle">Human Resource Management</small>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="navbar-center d-none d-lg-flex">
+                <div class="current-time-nav">
+                    <div class="time-info">
+                        <span class="nav-time" id="navTime"></span>
+                        <small class="nav-date" id="navDate"></small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="navbar-end d-flex align-items-center">
+                <div class="navbar-notifications me-3">
+                    <button class="btn btn-link text-white position-relative" type="button">
+                        <i class="bi bi-bell fs-5"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            3
+                        </span>
+                    </button>
+                </div>
+                <div class="user-info-dropdown dropdown">
+                    <button class="btn btn-link text-white dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
+                        <div class="user-avatar">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <div class="user-details d-none d-md-block ms-2">
+                            <span class="user-name" id="navUserName"></span>
+                            <small class="user-role" id="navUserRole"></small>
+                        </div>
+                        <i class="bi bi-chevron-down ms-2"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end user-dropdown">
+                        <li><h6 class="dropdown-header">Account</h6></li>
+                        <li><a class="dropdown-item" href="#" onclick="showSection('profile')"><i class="bi bi-person me-2"></i>My Profile</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="showSection('salary')"><i class="bi bi-currency-rupee me-2"></i>Salary Details</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Settings</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-question-circle me-2"></i>Help & Support</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar with Mobile Support -->
+            <div class="col-md-2 bg-light p-0" id="sidebar">
+                <div class="list-group list-group-flush">
+                    <a href="#" class="list-group-item list-group-item-action active" onclick="showSection('dashboard')">Dashboard</a>
+                    <a href="#" class="list-group-item list-group-item-action" onclick="showSection('profile')">Profile</a>
+                    <a href="#" class="list-group-item list-group-item-action" onclick="showSection('attendance')">Attendance</a>
+                    <a href="#" class="list-group-item list-group-item-action" onclick="showSection('leave')">Leave</a>
+                    <a href="#" class="list-group-item list-group-item-action" onclick="showSection('salary')">Salary</a>
+                    <a href="#" class="list-group-item list-group-item-action" onclick="showSection('directory')">Employee Directory</a>
+                    <div id="adminMenu" class="admin-only-menu" style="display:none;">
+                        <div class="admin-menu-divider">
+                            <small class="text-muted px-3">Admin Functions</small>
+                        </div>
+                        <a href="#" class="list-group-item list-group-item-action text-warning admin-menu-item" onclick="showSection('approvals')">
+                            <i class="bi bi-check-circle me-2"></i>Approvals
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action text-warning admin-menu-item" onclick="showSection('employees')">
+                            <i class="bi bi-people me-2"></i>Employees
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action text-warning admin-menu-item" onclick="showSection('payroll')">
+                            <i class="bi bi-currency-rupee me-2"></i>Payroll
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 p-4">
+                <!-- Dashboard Section -->
+                <div id="dashboardSection" class="content-section">
+                    <h2>Dashboard</h2>
+                    
+                    <!-- Admin Quick Access Cards -->
+                    <div id="adminDashboard" style="display:none;">
+                        <div class="dashboard-welcome mb-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h3 class="welcome-title">Admin Dashboard - <span id="adminWelcomeName"></span> 👨‍💼</h3>
+                                    <p class="welcome-subtitle">Manage employees, approvals, and system operations</p>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <div class="current-time-widget">
+                                        <div class="time-display" id="adminDashboardTime"></div>
+                                        <div class="date-display" id="adminDashboardDate"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="card quick-access-card employee-list-card" onclick="showSection('employees')">
+                                    <div class="card-body text-center">
+                                        <div class="icon-wrapper employee-icon">
+                                            <i class="bi bi-people"></i>
+                                        </div>
+                                        <h6 class="card-title">Employee List</h6>
+                                        <p class="card-text">Manage Staff Records</p>
+                                        <div class="card-footer-info">
+                                            <small class="text-muted" id="totalEmployees">0 employees</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card quick-access-card attendance-records-card" onclick="showAdminAttendance()">
+                                    <div class="card-body text-center">
+                                        <div class="icon-wrapper attendance-admin-icon">
+                                            <i class="bi bi-clock-history"></i>
+                                        </div>
+                                        <h6 class="card-title">Attendance Records</h6>
+                                        <p class="card-text">View All Records</p>
+                                        <div class="card-footer-info">
+                                            <small class="text-muted">Today's data</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card quick-access-card leave-approvals-card" onclick="showSection('approvals')">
+                                    <div class="card-body text-center">
+                                        <div class="icon-wrapper approval-icon">
+                                            <i class="bi bi-check-circle"></i>
+                                        </div>
+                                        <h6 class="card-title">Leave Approvals</h6>
+                                        <p class="card-text">Pending Actions</p>
+                                        <div class="card-footer-info">
+                                            <small class="text-muted" id="pendingApprovalsCount">0 pending</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card quick-access-card payroll-card" onclick="showSection('payroll')">
+                                    <div class="card-body text-center">
+                                        <div class="icon-wrapper payroll-icon">
+                                            <i class="bi bi-currency-rupee"></i>
+                                        </div>
+                                        <h6 class="card-title">Payroll Management</h6>
+                                        <p class="card-text">Salary Administration</p>
+                                        <div class="card-footer-info">
+                                            <small class="text-muted">Current month</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Employee Quick Access Cards -->
+                    <div id="employeeDashboard">
+                        <div class="dashboard-welcome mb-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h3 class="welcome-title">Welcome back, <span id="welcomeUserName"></span>! 👋</h3>
+                                    <p class="welcome-subtitle">Here's what's happening with your work today</p>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <div class="current-time-widget">
+                                        <div class="time-display" id="dashboardTime"></div>
+                                        <div class="date-display" id="dashboardDate"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="card quick-access-card profile-card" onclick="showSection('profile')">
+                                    <div class="card-body text-center">
+                                        <div class="icon-wrapper profile-icon">
+                                            <i class="bi bi-person-circle"></i>
+                                        </div>
+                                        <h6 class="card-title">My Profile</h6>
+                                        <p class="card-text">View & Edit Details</p>
+                                        <div class="card-footer-info">
+                                            <small class="text-muted">Last updated today</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card quick-access-card attendance-card" onclick="showSection('attendance')">
+                                    <div class="card-body text-center">
+                                        <div class="icon-wrapper attendance-icon">
+                                            <i class="bi bi-clock-history"></i>
+                                        </div>
+                                        <h6 class="card-title">Attendance</h6>
+                                        <p class="card-text">Check In/Out & Records</p>
+                                        <div class="card-footer-info">
+                                            <small class="text-muted" id="attendanceStatus">Not checked in</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card quick-access-card leave-card" onclick="showSection('leave')">
+                                    <div class="card-body text-center">
+                                        <div class="icon-wrapper leave-icon">
+                                            <i class="bi bi-calendar-x"></i>
+                                        </div>
+                                        <h6 class="card-title">Leave Requests</h6>
+                                        <p class="card-text">Apply & Track Status</p>
+                                        <div class="card-footer-info">
+                                            <small class="text-muted" id="leaveStatus">0 pending</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card quick-access-card salary-card" onclick="showSection('salary')">
+                                    <div class="card-body text-center">
+                                        <div class="icon-wrapper salary-icon">
+                                            <i class="bi bi-currency-rupee"></i>
+                                        </div>
+                                        <h6 class="card-title">Salary Details</h6>
+                                        <p class="card-text">View Payslips & Info</p>
+                                        <div class="card-footer-info">
+                                            <small class="text-muted" id="salaryInfo">Current month</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity & Alerts -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card activity-card">
+                                <div class="card-header d-flex align-items-center">
+                                    <i class="bi bi-activity me-2 text-primary"></i>
+                                    <span>Recent Activity</span>
+                                </div>
+                                <div class="card-body">
+                                    <div id="recentActivity">
+                                        <div class="activity-item d-flex align-items-center">
+                                            <div class="activity-icon bg-success">
+                                                <i class="bi bi-check-circle"></i>
+                                            </div>
+                                            <div class="activity-content">
+                                                <p class="mb-1 fw-medium">Checked in successfully</p>
+                                                <small class="text-muted">Today at 9:00 AM</small>
+                                            </div>
+                                        </div>
+                                        <div class="activity-item d-flex align-items-center">
+                                            <div class="activity-icon bg-info">
+                                                <i class="bi bi-calendar-check"></i>
+                                            </div>
+                                            <div class="activity-content">
+                                                <p class="mb-1 fw-medium">Leave request approved</p>
+                                                <small class="text-muted">Yesterday</small>
+                                            </div>
+                                        </div>
+                                        <div class="activity-item d-flex align-items-center">
+                                            <div class="activity-icon bg-warning">
+                                                <i class="bi bi-file-earmark"></i>
+                                            </div>
+                                            <div class="activity-content">
+                                                <p class="mb-1 fw-medium">Profile updated</p>
+                                                <small class="text-muted">2 days ago</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card alerts-card">
+                                <div class="card-header d-flex align-items-center">
+                                    <i class="bi bi-bell me-2 text-warning"></i>
+                                    <span>Alerts & Notifications</span>
+                                </div>
+                                <div class="card-body">
+                                    <div id="alertsContainer">
+                                        <div class="alert alert-info alert-sm d-flex align-items-center">
+                                            <i class="bi bi-info-circle me-2"></i>
+                                            <span>Remember to submit your timesheet for this week</span>
+                                        </div>
+                                        <div class="alert alert-warning alert-sm d-flex align-items-center">
+                                            <i class="bi bi-clock me-2"></i>
+                                            <span>Pending leave approval - Check status</span>
+                                        </div>
+                                        <div class="alert alert-success alert-sm d-flex align-items-center">
+                                            <i class="bi bi-check-circle me-2"></i>
+                                            <span>Payslip for December is now available</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card stats-card today-status">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="stats-icon">
+                                        <i class="bi bi-calendar-day"></i>
+                                    </div>
+                                    <div class="stats-content">
+                                        <h6 class="stats-title">Today's Status</h6>
+                                        <p class="stats-value" id="todayStatus">Not Checked In</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stats-card pending-leaves">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="stats-icon">
+                                        <i class="bi bi-hourglass-split"></i>
+                                    </div>
+                                    <div class="stats-content">
+                                        <h6 class="stats-title">Pending Leaves</h6>
+                                        <p class="stats-value" id="pendingLeaves">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stats-card monthly-salary">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="stats-icon">
+                                        <i class="bi bi-currency-rupee"></i>
+                                    </div>
+                                    <div class="stats-content">
+                                        <h6 class="stats-title">Monthly Salary</h6>
+                                        <p class="stats-value" id="monthlySalary">₹0</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3" id="adminStats" style="display:none;">
+                            <div class="card stats-card pending-approvals">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="stats-icon">
+                                        <i class="bi bi-check-circle"></i>
+                                    </div>
+                                    <div class="stats-content">
+                                        <h6 class="stats-title">Pending Approvals</h6>
+                                        <p class="stats-value" id="pendingApprovals">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Section -->
+                <div id="profileSection" class="content-section" style="display:none;">
+                    <h2>Employee Profile</h2>
+                    
+                    <!-- Profile Header -->
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-center">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="profile-picture-container mb-3">
+                                        <img id="profilePicture" src="https://via.placeholder.com/150" class="profile-picture" alt="Profile Picture">
+                                        <div class="profile-picture-overlay">
+                                            <i class="bi bi-camera"></i>
+                                        </div>
+                                    </div>
+                                    <h5 id="profileDisplayName"></h5>
+                                    <p class="text-muted" id="profileDisplayRole"></p>
+                                    <button class="btn btn-outline-primary btn-sm" onclick="changeProfilePicture()">Change Photo</button>
+                                    <button class="btn btn-primary btn-sm mt-2" onclick="editProfile()">Edit Profile</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">Personal Details</div>
+                                        <div class="card-body">
+                                            <p><strong>Full Name:</strong> <span id="profileName"></span></p>
+                                            <p><strong>Employee ID:</strong> <span id="profileEmployeeId"></span></p>
+                                            <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+                                            <p><strong>Phone:</strong> <span id="profilePhone">+91 9876543210</span></p>
+                                            <p><strong>Address:</strong> <span id="profileAddress">123 Main St, City, State</span></p>
+                                            <p><strong>Date of Birth:</strong> <span id="profileDOB">01/01/1990</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">Job Details</div>
+                                        <div class="card-body">
+                                            <p><strong>Department:</strong> <span id="profileDept"></span></p>
+                                            <p><strong>Position:</strong> <span id="profilePosition">Software Developer</span></p>
+                                            <p><strong>Role:</strong> <span id="profileRole"></span></p>
+                                            <p><strong>Join Date:</strong> <span id="profileJoinDate"></span></p>
+                                            <p><strong>Manager:</strong> <span id="profileManager">John Smith</span></p>
+                                            <p><strong>Employment Type:</strong> <span id="profileEmploymentType">Full-time</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Salary Structure -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">Salary Structure</div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <p><strong>Basic Salary:</strong></p>
+                                            <p><strong>House Allowance:</strong></p>
+                                            <p><strong>Transport Allowance:</strong></p>
+                                            <p><strong>Medical Allowance:</strong></p>
+                                            <hr>
+                                            <p><strong>PF Deduction:</strong></p>
+                                            <p><strong>Tax Deduction:</strong></p>
+                                            <hr>
+                                            <p class="text-success"><strong>Net Salary:</strong></p>
+                                        </div>
+                                        <div class="col-6 text-end">
+                                            <p id="salaryBasic"></p>
+                                            <p id="salaryHRA">₹8,000</p>
+                                            <p id="salaryTransport">₹3,000</p>
+                                            <p id="salaryMedical">₹2,000</p>
+                                            <hr>
+                                            <p class="text-danger" id="salaryPF">₹2,000</p>
+                                            <p class="text-danger" id="salaryTax">₹3,000</p>
+                                            <hr>
+                                            <p class="text-success fw-bold" id="salaryNet"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">Documents</div>
+                                <div class="card-body">
+                                    <div class="document-list">
+                                        <div class="document-item">
+                                            <i class="bi bi-file-earmark-pdf text-danger"></i>
+                                            <span>Resume.pdf</span>
+                                            <button class="btn btn-sm btn-outline-primary ms-auto">View</button>
+                                        </div>
+                                        <div class="document-item">
+                                            <i class="bi bi-file-earmark-image text-primary"></i>
+                                            <span>ID_Proof.jpg</span>
+                                            <button class="btn btn-sm btn-outline-primary ms-auto">View</button>
+                                        </div>
+                                        <div class="document-item">
+                                            <i class="bi bi-file-earmark-text text-success"></i>
+                                            <span>Experience_Letter.pdf</span>
+                                            <button class="btn btn-sm btn-outline-primary ms-auto">View</button>
+                                        </div>
+                                        <div class="document-item">
+                                            <i class="bi bi-file-earmark text-warning"></i>
+                                            <span>Educational_Certificate.pdf</span>
+                                            <button class="btn btn-sm btn-outline-primary ms-auto">View</button>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary btn-sm mt-3" onclick="uploadDocument()">Upload Document</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Information -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">Emergency Contact</div>
+                                <div class="card-body">
+                                    <p><strong>Name:</strong> <span id="emergencyName">Jane Doe</span></p>
+                                    <p><strong>Relationship:</strong> <span id="emergencyRelation">Spouse</span></p>
+                                    <p><strong>Phone:</strong> <span id="emergencyPhone">+91 9876543211</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">Bank Details</div>
+                                <div class="card-body">
+                                    <p><strong>Bank Name:</strong> <span id="bankName">State Bank of India</span></p>
+                                    <p><strong>Account Number:</strong> <span id="accountNumber">****1234</span></p>
+                                    <p><strong>IFSC Code:</strong> <span id="ifscCode">SBIN0001234</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance Section -->
+                <div id="attendanceSection" class="content-section" style="display:none;">
+                    <h2>Attendance Management</h2>
+                    
+                    <!-- Check-in/Check-out Controls -->
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <div class="card attendance-control-card">
+                                <div class="card-header">
+                                    <h5><i class="bi bi-clock me-2"></i>Today's Attendance</h5>
+                                    <div class="attendance-date">
+                                        <span id="currentDate"></span>
+                                        <small id="currentTime" class="text-muted"></small>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="attendance-status-display mb-4">
+                                        <div class="status-indicator" id="statusIndicator">
+                                            <div class="status-dot"></div>
+                                            <span id="attendanceStatusText">Not Checked In</span>
+                                        </div>
+                                        <div class="time-display" id="workingTimeDisplay">
+                                            <span>Working Time: </span>
+                                            <strong id="workingHours">00:00:00</strong>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="attendance-actions">
+                                        <div class="row g-3">
+                                            <div class="col-md-3">
+                                                <button class="btn btn-success w-100" onclick="checkIn()" id="checkInBtn">
+                                                    <i class="bi bi-play-circle me-2"></i>Check In
+                                                </button>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button class="btn btn-warning w-100" onclick="startBreak()" id="breakBtn" disabled>
+                                                    <i class="bi bi-pause-circle me-2"></i>Start Break
+                                                </button>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button class="btn btn-info w-100" onclick="endBreak()" id="endBreakBtn" disabled style="display:none;">
+                                                    <i class="bi bi-play-circle me-2"></i>End Break
+                                                </button>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <button class="btn btn-danger w-100" onclick="checkOut()" id="checkOutBtn" disabled>
+                                                    <i class="bi bi-stop-circle me-2"></i>Check Out
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="row g-3 mt-2">
+                                            <div class="col-md-6">
+                                                <button class="btn btn-outline-warning w-100" onclick="markHalfDay()" id="halfDayBtn">
+                                                    <i class="bi bi-clock-history me-2"></i>Mark Half Day
+                                                </button>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="break-time-display">
+                                                    <small class="text-muted">Break Time: </small>
+                                                    <strong id="breakTime">00:00:00</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">Attendance Summary</div>
+                                <div class="card-body">
+                                    <div class="row text-center">
+                                        <div class="col-6 mb-3">
+                                            <div class="summary-item present">
+                                                <div class="summary-number" id="presentDays">0</div>
+                                                <div class="summary-label">Present</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 mb-3">
+                                            <div class="summary-item absent">
+                                                <div class="summary-number" id="absentDays">0</div>
+                                                <div class="summary-label">Absent</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="summary-item half-day">
+                                                <div class="summary-number" id="halfDays">0</div>
+                                                <div class="summary-label">Half Day</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="summary-item leave">
+                                                <div class="summary-number" id="leaveDays">0</div>
+                                                <div class="summary-label">Leave</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- View Toggle -->
+                    <div class="mb-3">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-primary active" onclick="showWeeklyView()">Weekly View</button>
+                            <button type="button" class="btn btn-outline-primary" onclick="showDailyView()">Daily View</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Weekly Attendance View -->
+                    <div id="weeklyAttendanceView" class="card">
+                        <div class="card-header">This Week's Attendance</div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Day</th>
+                                        <th>Check In</th>
+                                        <th>Check Out</th>
+                                        <th>Hours</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="weeklyAttendanceTable">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Daily Attendance View -->
+                    <div id="dailyAttendanceView" class="card" style="display:none;">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Daily Attendance Records</h6>
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="date" class="form-control" id="dailyDateFilter" onchange="loadDailyAttendance()">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="dailyAttendanceDetails">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>Attendance Details</h6>
+                                        <p><strong>Date:</strong> <span id="dailySelectedDate"></span></p>
+                                        <p><strong>Check In:</strong> <span id="dailyCheckIn">-</span></p>
+                                        <p><strong>Check Out:</strong> <span id="dailyCheckOut">-</span></p>
+                                        <p><strong>Total Hours:</strong> <span id="dailyTotalHours">-</span></p>
+                                        <p><strong>Status:</strong> <span id="dailyStatus" class="badge">-</span></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>Actions</h6>
+                                        <button class="btn btn-sm btn-primary mb-2" onclick="editDailyAttendance()">Edit Attendance</button><br>
+                                        <button class="btn btn-sm btn-info mb-2" onclick="addNote()">Add Note</button><br>
+                                        <div id="attendanceNote" class="mt-2">
+                                            <small class="text-muted">No notes added</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Leave Section -->
+                <div id="leaveSection" class="content-section" style="display:none;">
+                    <div class="leave-header mb-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h2><i class="bi bi-calendar-x me-2 text-primary"></i>Leave Management</h2>
+                                <p class="text-muted mb-0">Apply for leave and track your requests</p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <div class="leave-balance-badge">
+                                    <i class="bi bi-calendar-check me-1"></i>
+                                    <span>Balance: 18 days</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Leave Stats Cards -->
+                    <div class="row mb-4">
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="leave-stat-card total-leaves">
+                                <div class="stat-icon">
+                                    <i class="bi bi-calendar-range"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h4>24</h4>
+                                    <span>Total Leaves</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="leave-stat-card used-leaves">
+                                <div class="stat-icon">
+                                    <i class="bi bi-calendar-check"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h4>6</h4>
+                                    <span>Used</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="leave-stat-card pending-leaves">
+                                <div class="stat-icon">
+                                    <i class="bi bi-hourglass-split"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h4 id="pendingCount">0</h4>
+                                    <span>Pending</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="leave-stat-card remaining-leaves">
+                                <div class="stat-icon">
+                                    <i class="bi bi-calendar-plus"></i>
+                                </div>
+                                <div class="stat-content">
+                                    <h4>18</h4>
+                                    <span>Remaining</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Enhanced Leave Form -->
+                    <div class="leave-form-container" id="leaveForm" style="display:none;">
+                        <div class="leave-form-card">
+                            <div class="form-header">
+                                <h5><i class="bi bi-calendar-plus me-2"></i>Apply for Leave</h5>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="hideLeaveForm()">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Enhanced Leave Type Selection -->
+                            <div class="leave-type-grid mb-4">
+                                <div class="leave-type-card" data-type="annual" onclick="selectLeaveType('annual')">
+                                    <div class="type-icon annual">
+                                        <i class="bi bi-calendar-heart"></i>
+                                    </div>
+                                    <div class="type-info">
+                                        <h6>Annual Leave</h6>
+                                        <small>Vacation & holidays</small>
+                                        <div class="type-balance">12 days left</div>
+                                    </div>
+                                </div>
+                                <div class="leave-type-card" data-type="sick" onclick="selectLeaveType('sick')">
+                                    <div class="type-icon sick">
+                                        <i class="bi bi-heart-pulse"></i>
+                                    </div>
+                                    <div class="type-info">
+                                        <h6>Sick Leave</h6>
+                                        <small>Medical & health</small>
+                                        <div class="type-balance">8 days left</div>
+                                    </div>
+                                </div>
+                                <div class="leave-type-card" data-type="casual" onclick="selectLeaveType('casual')">
+                                    <div class="type-icon casual">
+                                        <i class="bi bi-calendar-event"></i>
+                                    </div>
+                                    <div class="type-info">
+                                        <h6>Casual Leave</h6>
+                                        <small>Personal matters</small>
+                                        <div class="type-balance">4 days left</div>
+                                    </div>
+                                </div>
+                                <div class="leave-type-card" data-type="emergency" onclick="selectLeaveType('emergency')">
+                                    <div class="type-icon emergency">
+                                        <i class="bi bi-exclamation-triangle"></i>
+                                    </div>
+                                    <div class="type-info">
+                                        <h6>Emergency</h6>
+                                        <small>Urgent situations</small>
+                                        <div class="type-balance">Unlimited</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <form id="leaveApplicationForm">
+                                <input type="hidden" id="selectedLeaveType">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-floating mb-3">
+                                            <input type="date" class="form-control" id="startDate" required>
+                                            <label for="startDate"><i class="bi bi-calendar-date me-2"></i>Start Date</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-floating mb-3">
+                                            <input type="date" class="form-control" id="endDate" required>
+                                            <label for="endDate"><i class="bi bi-calendar-check me-2"></i>End Date</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="leave-duration-display">
+                                            <div class="duration-card" id="leaveDaysDisplay" style="display:none;">
+                                                <div class="duration-icon">
+                                                    <i class="bi bi-calendar-range"></i>
+                                                </div>
+                                                <div class="duration-info">
+                                                    <h5 id="totalDays">0</h5>
+                                                    <small>Days</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <select class="form-select" id="leaveSession">
+                                                <option value="full">Full Day</option>
+                                                <option value="first-half">First Half</option>
+                                                <option value="second-half">Second Half</option>
+                                            </select>
+                                            <label for="leaveSession"><i class="bi bi-clock me-2"></i>Session</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <select class="form-select" id="leavePriority">
+                                                <option value="normal">Normal</option>
+                                                <option value="urgent">Urgent</option>
+                                                <option value="emergency">Emergency</option>
+                                            </select>
+                                            <label for="leavePriority"><i class="bi bi-flag me-2"></i>Priority</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" id="leaveReason" placeholder="Reason" rows="4" style="height: 120px;" required></textarea>
+                                        <label for="leaveReason"><i class="bi bi-chat-text me-2"></i>Reason/Remarks</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="bi bi-send me-2"></i>Submit Application
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="resetLeaveForm()">
+                                        <i class="bi bi-arrow-clockwise me-2"></i>Reset
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger" onclick="hideLeaveForm()">
+                                        <i class="bi bi-x-circle me-2"></i>Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="leave-actions mb-4">
+                        <button class="btn btn-primary" onclick="showLeaveForm()">
+                            <i class="bi bi-plus-circle me-2"></i>Apply for Leave
+                        </button>
+                        <button class="btn btn-outline-info" onclick="viewLeaveCalendar()">
+                            <i class="bi bi-calendar3 me-2"></i>Leave Calendar
+                        </button>
+                        <button class="btn btn-outline-success" onclick="downloadLeaveReport()">
+                            <i class="bi bi-download me-2"></i>Download Report
+                        </button>
+                    </div>
+
+                    <!-- Enhanced Leave History -->
+                    <div class="leave-history-card">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5><i class="bi bi-clock-history me-2"></i>Leave History</h5>
+                                <div class="history-filters">
+                                    <select class="form-select form-select-sm" id="statusFilter" onchange="filterLeaveHistory()">
+                                        <option value="all">All Status</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="approved">Approved</option>
+                                        <option value="rejected">Rejected</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Duration</th>
+                                            <th>Days</th>
+                                            <th>Status</th>
+                                            <th>Applied</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="leaveHistory">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Approvals Section -->
+                <div id="approvalsSection" class="content-section" style="display:none;">
+                    <h2><i class="bi bi-check-circle me-2"></i>Leave Approvals</h2>
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Pending Leave Requests</h5>
+                            <div>
+                                <button class="btn btn-success btn-sm me-2" onclick="bulkApprove('approved')">
+                                    <i class="bi bi-check-all me-1"></i>Approve Selected
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="bulkApprove('rejected')">
+                                    <i class="bi bi-x-circle me-1"></i>Reject Selected
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                                            <th>Employee</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Type</th>
+                                            <th>Reason</th>
+                                            <th>Applied Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="approvalsTable">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Salary Section -->
+                <div id="salarySection" class="content-section" style="display:none;">
+                    <div class="salary-header mb-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h2><i class="bi bi-currency-rupee me-2 text-primary"></i>Salary Management</h2>
+                                <p class="text-muted mb-0">Comprehensive salary breakdown and payroll information</p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <div class="salary-period-badge">
+                                    <i class="bi bi-calendar-month me-1"></i>
+                                    <span id="currentSalaryPeriod">December 2024</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Salary Overview Cards -->
+                    <div class="row mb-4">
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="salary-overview-card gross-salary">
+                                <div class="salary-card-header">
+                                    <div class="salary-card-icon">
+                                        <i class="bi bi-cash-stack"></i>
+                                    </div>
+                                    <div class="salary-trend positive">
+                                        <i class="bi bi-arrow-up"></i>
+                                        <span>+2.5%</span>
+                                    </div>
+                                </div>
+                                <div class="salary-card-content">
+                                    <h6>Gross Salary</h6>
+                                    <h3 id="grossSalaryAmount">₹0</h3>
+                                    <small class="text-success">Before deductions</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="salary-overview-card net-salary">
+                                <div class="salary-card-header">
+                                    <div class="salary-card-icon">
+                                        <i class="bi bi-wallet2"></i>
+                                    </div>
+                                    <div class="salary-trend positive">
+                                        <i class="bi bi-arrow-up"></i>
+                                        <span>+1.8%</span>
+                                    </div>
+                                </div>
+                                <div class="salary-card-content">
+                                    <h6>Net Salary</h6>
+                                    <h3 id="netSalaryAmount">₹0</h3>
+                                    <small class="text-primary">Take home amount</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="salary-overview-card deductions">
+                                <div class="salary-card-header">
+                                    <div class="salary-card-icon">
+                                        <i class="bi bi-dash-circle"></i>
+                                    </div>
+                                    <div class="salary-trend neutral">
+                                        <i class="bi bi-dash"></i>
+                                        <span>0%</span>
+                                    </div>
+                                </div>
+                                <div class="salary-card-content">
+                                    <h6>Deductions</h6>
+                                    <h3 id="totalDeductionsAmount">₹0</h3>
+                                    <small class="text-danger">Tax + PF + Others</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="salary-overview-card ytd-earnings">
+                                <div class="salary-card-header">
+                                    <div class="salary-card-icon">
+                                        <i class="bi bi-graph-up"></i>
+                                    </div>
+                                    <div class="salary-trend positive">
+                                        <i class="bi bi-arrow-up"></i>
+                                        <span>+12%</span>
+                                    </div>
+                                </div>
+                                <div class="salary-card-content">
+                                    <h6>YTD Earnings</h6>
+                                    <h3 id="ytdEarnings">₹0</h3>
+                                    <small class="text-info">Year to date</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Content Row -->
+                    <div class="row">
+                        <!-- Salary Breakdown -->
+                        <div class="col-lg-8 mb-4">
+                            <div class="salary-breakdown-card">
+                                <div class="card-header">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h5><i class="bi bi-pie-chart me-2"></i>Salary Breakdown</h5>
+                                        <div class="salary-actions">
+                                            <button class="btn btn-outline-primary btn-sm" onclick="downloadPayslip()">
+                                                <i class="bi bi-download me-1"></i>Download
+                                            </button>
+                                            <button class="btn btn-primary btn-sm" id="editSalaryBtn" onclick="editSalary(currentUser.id)">
+                                                <i class="bi bi-pencil me-1"></i>Edit
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Salary Tabs -->
+                                    <ul class="nav nav-tabs salary-tabs mb-3" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#earnings-tab">
+                                                <i class="bi bi-plus-circle me-1"></i>Earnings
+                                            </button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#deductions-tab">
+                                                <i class="bi bi-dash-circle me-1"></i>Deductions
+                                            </button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#summary-tab">
+                                                <i class="bi bi-calculator me-1"></i>Summary
+                                            </button>
+                                        </li>
+                                    </ul>
+                                    
+                                    <!-- Tab Content -->
+                                    <div class="tab-content">
+                                        <!-- Earnings Tab -->
+                                        <div class="tab-pane fade show active" id="earnings-tab">
+                                            <div class="salary-items">
+                                                <div class="salary-item">
+                                                    <div class="item-info">
+                                                        <span class="item-name">Basic Salary</span>
+                                                        <span class="item-desc">Base monthly salary</span>
+                                                    </div>
+                                                    <span class="item-amount" id="basicSalaryDetail">₹0</span>
+                                                </div>
+                                                <div class="salary-item">
+                                                    <div class="item-info">
+                                                        <span class="item-name">House Rent Allowance</span>
+                                                        <span class="item-desc">40% of basic salary</span>
+                                                    </div>
+                                                    <span class="item-amount" id="hraAmount">₹0</span>
+                                                </div>
+                                                <div class="salary-item">
+                                                    <div class="item-info">
+                                                        <span class="item-name">Other Allowances</span>
+                                                        <span class="item-desc">Transport, Medical, etc.</span>
+                                                    </div>
+                                                    <span class="item-amount">₹5,000</span>
+                                                </div>
+                                            </div>
+                                            <div class="section-total text-success">
+                                                <strong>Total Earnings: <span id="totalEarnings">₹0</span></strong>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Deductions Tab -->
+                                        <div class="tab-pane fade" id="deductions-tab">
+                                            <div class="salary-items">
+                                                <div class="salary-item">
+                                                    <div class="item-info">
+                                                        <span class="item-name">Provident Fund</span>
+                                                        <span class="item-desc">12% of basic salary</span>
+                                                    </div>
+                                                    <span class="item-amount text-danger" id="pfAmount">₹0</span>
+                                                </div>
+                                                <div class="salary-item">
+                                                    <div class="item-info">
+                                                        <span class="item-name">Income Tax</span>
+                                                        <span class="item-desc">As per tax slab</span>
+                                                    </div>
+                                                    <span class="item-amount text-danger" id="taxAmount">₹0</span>
+                                                </div>
+                                                <div class="salary-item">
+                                                    <div class="item-info">
+                                                        <span class="item-name">Professional Tax</span>
+                                                        <span class="item-desc">State professional tax</span>
+                                                    </div>
+                                                    <span class="item-amount text-danger">₹200</span>
+                                                </div>
+                                            </div>
+                                            <div class="section-total text-danger">
+                                                <strong>Total Deductions: <span id="totalDeductionsDetail">₹0</span></strong>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Summary Tab -->
+                                        <div class="tab-pane fade" id="summary-tab">
+                                            <div class="net-salary-card">
+                                                <div class="row align-items-center">
+                                                    <div class="col-md-8">
+                                                        <h6 class="text-white-50 mb-2">Net Take Home Salary</h6>
+                                                        <div class="net-amount">
+                                                            <h3 id="summaryNet">₹0</h3>
+                                                            <small class="text-white-50">After all deductions</small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 text-end">
+                                                        <div class="salary-breakdown-mini">
+                                                            <div class="mini-item">
+                                                                <small>Gross:</small>
+                                                                <span id="summaryGross">₹0</span>
+                                                            </div>
+                                                            <div class="mini-item">
+                                                                <small>Deductions:</small>
+                                                                <span id="summaryDeductions">₹0</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sidebar -->
+                        <div class="col-lg-4">
+                            <!-- Payslip History -->
+                            <div class="payslip-history-card mb-4">
+                                <div class="card-header">
+                                    <h6><i class="bi bi-file-earmark-text me-2"></i>Payslip History</h6>
+                                </div>
+                                <div class="card-body p-2">
+                                    <div class="payslip-item" onclick="viewPayslipDetails('2024-12')">
+                                        <div class="payslip-info">
+                                            <span class="payslip-month">December 2024</span>
+                                            <small class="payslip-status text-success">✓ Paid</small>
+                                        </div>
+                                        <i class="bi bi-chevron-right"></i>
+                                    </div>
+                                    <div class="payslip-item" onclick="viewPayslipDetails('2024-11')">
+                                        <div class="payslip-info">
+                                            <span class="payslip-month">November 2024</span>
+                                            <small class="payslip-status text-success">✓ Paid</small>
+                                        </div>
+                                        <i class="bi bi-chevron-right"></i>
+                                    </div>
+                                    <div class="payslip-item" onclick="viewPayslipDetails('2024-10')">
+                                        <div class="payslip-info">
+                                            <span class="payslip-month">October 2024</span>
+                                            <small class="payslip-status text-success">✓ Paid</small>
+                                        </div>
+                                        <i class="bi bi-chevron-right"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Actions -->
+                            <div class="quick-actions-card">
+                                <div class="card-header">
+                                    <h6><i class="bi bi-lightning me-2"></i>Quick Actions</h6>
+                                </div>
+                                <div class="card-body">
+                                    <button class="btn btn-outline-primary w-100 mb-2" onclick="downloadPayslip()">
+                                        <i class="bi bi-download me-2"></i>Download Payslip
+                                    </button>
+                                    <button class="btn btn-outline-success w-100 mb-2" onclick="viewTaxStatement()">
+                                        <i class="bi bi-file-earmark-spreadsheet me-2"></i>Tax Statement
+                                    </button>
+                                    <button class="btn btn-outline-info w-100" onclick="salaryProjection()">
+                                        <i class="bi bi-graph-up me-2"></i>Salary Projection
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Employee Directory Section -->
+                <div id="directorySection" class="content-section" style="display:none;">
+                    <h2><i class="bi bi-people me-2"></i>Employee Directory</h2>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <select class="form-select" id="directoryFilter" onchange="filterDirectory()">
+                                <option value="all">All Departments</option>
+                                <option value="HR">HR Department</option>
+                                <option value="IT">IT Department</option>
+                                <option value="Finance">Finance Department</option>
+                                <option value="Marketing">Marketing Department</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="searchEmployee" placeholder="Search employees..." onkeyup="searchEmployees()">
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="empTable">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Employee ID</th>
+                                            <th>Name</th>
+                                            <th>Department</th>
+                                            <th>Salary</th>
+                                            <th>Attendance (Days)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Employees Section -->
+                <div id="employeesSection" class="content-section" style="display:none;">
+                    <h2>Employee Management</h2>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <select class="form-select" id="employeeFilter" onchange="filterEmployees()">
+                                <option value="all">All Employees</option>
+                                <option value="HR">HR Department</option>
+                                <option value="IT">IT Department</option>
+                                <option value="Finance">Finance Department</option>
+                                <option value="Marketing">Marketing Department</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <select class="form-select" id="employeeSelector" onchange="switchEmployee()">
+                                <option value="">Select Employee to View Details</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Department</th>
+                                        <th>Role</th>
+                                        <th>Join Date</th>
+                                        <th>Salary</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="employeesTable">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Attendance View -->
+                <div id="adminAttendanceSection" class="content-section" style="display:none;">
+                    <h2>Attendance Records</h2>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <select class="form-select" id="attendanceEmployeeFilter" onchange="loadEmployeeAttendance()">
+                                <option value="all">All Employees</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input type="date" class="form-control" id="attendanceDate" onchange="loadEmployeeAttendance()">
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-primary" onclick="exportAttendance()">Export Report</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Date</th>
+                                        <th>Check In</th>
+                                        <th>Check Out</th>
+                                        <th>Hours Worked</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adminAttendanceTable">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payroll Section -->
+                <div id="payrollSection" class="content-section" style="display:none;">
+                    <h2><i class="bi bi-currency-rupee me-2"></i>Payroll Management</h2>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <div class="card stats-card payroll-total">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="stats-icon">
+                                        <i class="bi bi-cash-stack"></i>
+                                    </div>
+                                    <div class="stats-content">
+                                        <h6 class="stats-title">Total Payroll</h6>
+                                        <p class="stats-value" id="totalPayroll">₹0</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stats-card payroll-processed">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="stats-icon">
+                                        <i class="bi bi-check-circle"></i>
+                                    </div>
+                                    <div class="stats-content">
+                                        <h6 class="stats-title">Processed</h6>
+                                        <p class="stats-value" id="processedPayroll">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stats-card payroll-pending">
+                                <div class="card-body d-flex align-items-center">
+                                    <div class="stats-icon">
+                                        <i class="bi bi-hourglass-split"></i>
+                                    </div>
+                                    <div class="stats-content">
+                                        <h6 class="stats-title">Pending</h6>
+                                        <p class="stats-value" id="pendingPayroll">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card stats-card">
+                                <div class="card-body text-center">
+                                    <button class="btn btn-primary" onclick="exportPayroll()">
+                                        <i class="bi bi-download me-2"></i>Export Report
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Employee Payroll</h5>
+                            <div>
+                                <select class="form-select" id="payrollDeptFilter" onchange="filterPayroll()">
+                                    <option value="all">All Departments</option>
+                                    <option value="HR">HR</option>
+                                    <option value="IT">IT</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="Marketing">Marketing</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Employee</th>
+                                            <th>Department</th>
+                                            <th>Basic Salary</th>
+                                            <th>Allowances</th>
+                                            <th>Deductions</th>
+                                            <th>Net Salary</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="payrollTable">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Edit Salary Modal -->
+                    <div class="modal fade" id="editSalaryModal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Update Salary Structure</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="editSalaryForm">
+                                        <input type="hidden" id="editSalaryUserId">
+                                        <div class="mb-3">
+                                            <label class="form-label">Employee Name</label>
+                                            <input type="text" class="form-control" id="editSalaryEmployeeName" readonly>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Basic Salary (₹)</label>
+                                                    <input type="number" class="form-control" id="editSalaryBasic" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Allowances (₹)</label>
+                                                    <input type="number" class="form-control" id="editSalaryAllowances" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Deductions (₹)</label>
+                                                <input type="number" class="form-control" id="editSalaryDeductions" required min="0">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="mb-3">
+                                                <label class="form-label">Net Salary (Auto-calculated)</label>
+                                                <input type="text" class="form-control" id="editSalaryNet" readonly>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-primary" onclick="saveSalaryChanges()">Update Salary</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="bi bi-person-gear me-2"></i>Edit Profile</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="editProfileForm">
+                        <!-- Personal Information Section -->
+                        <div class="profile-section mb-4">
+                            <div class="section-header">
+                                <h6 class="section-title"><i class="bi bi-person me-2"></i>Personal Information</h6>
+                                <small class="text-muted">Basic contact details</small>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="tel" class="form-control" id="editPhone" placeholder="Phone" required>
+                                        <label for="editPhone"><i class="bi bi-telephone me-2"></i>Phone Number</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="email" class="form-control" id="editPersonalEmail" placeholder="Email">
+                                        <label for="editPersonalEmail"><i class="bi bi-envelope me-2"></i>Personal Email</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" id="editAddress" placeholder="Address" style="height: 80px" required></textarea>
+                                        <label for="editAddress"><i class="bi bi-geo-alt me-2"></i>Address</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Admin Only Fields -->
+                        <div class="profile-section" id="adminEditFields" style="display:none;">
+                            <div class="section-header">
+                                <h6 class="section-title text-warning"><i class="bi bi-shield-check me-2"></i>Administrative Access</h6>
+                                <small class="text-muted">System-level information (Admin only)</small>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="editFullName" placeholder="Full Name">
+                                        <label for="editFullName"><i class="bi bi-person-badge me-2"></i>Full Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="email" class="form-control" id="editEmail" placeholder="Email">
+                                        <label for="editEmail"><i class="bi bi-envelope-at me-2"></i>Official Email</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-select" id="editDepartment">
+                                            <option value="HR">Human Resources</option>
+                                            <option value="IT">Information Technology</option>
+                                            <option value="Finance">Finance</option>
+                                            <option value="Marketing">Marketing</option>
+                                            <option value="Operations">Operations</option>
+                                        </select>
+                                        <label for="editDepartment"><i class="bi bi-building me-2"></i>Department</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="editPosition" placeholder="Position">
+                                        <label for="editPosition"><i class="bi bi-briefcase me-2"></i>Position</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="editManager" placeholder="Manager">
+                                        <label for="editManager"><i class="bi bi-person-up me-2"></i>Reporting Manager</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control" id="editBasicSalary" placeholder="Basic Salary" min="0">
+                                        <label for="editBasicSalary"><i class="bi bi-currency-rupee me-2"></i>Basic Salary (₹)</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-2"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="saveProfile()">
+                        <i class="bi bi-check-circle me-2"></i>Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

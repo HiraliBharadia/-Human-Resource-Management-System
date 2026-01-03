@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification - HRMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo-container">
+                    <i class="bi bi-envelope-check"></i>
+                </div>
+                <h2 class="login-title">Email Verification</h2>
+                <p class="login-subtitle">Please enter the verification code sent to your email</p>
+            </div>
+            <div class="login-form-container">
+                <form id="verificationForm">
+                    <div id="verificationError" class="alert alert-danger" style="display:none;"></div>
+                    <div class="verification-info mb-4">
+                        <div class="text-center">
+                            <i class="bi bi-envelope-paper verification-icon"></i>
+                            <p class="verification-text">
+                                We've sent a 6-digit verification code to your email address. 
+                                Please check your inbox and enter the code below.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control text-center verification-input" id="verificationCode" 
+                               placeholder="000000" maxlength="6" required>
+                        <label for="verificationCode"><i class="bi bi-shield-check me-2"></i>Verification Code</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 login-btn">
+                        <i class="bi bi-check-circle me-2"></i>Verify Email
+                    </button>
+                </form>
+                <div class="text-center mt-4">
+                    <p class="mb-2">Didn't receive the code?</p>
+                    <button class="btn btn-outline-secondary" onclick="resendCode()">
+                        <i class="bi bi-arrow-clockwise me-1"></i>Resend Code
+                    </button>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="index.html" class="signup-link">
+                        <i class="bi bi-arrow-left me-1"></i>Back to Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Background Animation -->
+    <div class="bg-animation">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+        <div class="floating-shape shape-4"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
