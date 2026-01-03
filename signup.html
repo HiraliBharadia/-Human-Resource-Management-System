@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body { background-color: #f5f6fa; font-family: "Segoe UI", sans-serif; }
+        .signup-box { max-width: 460px; background: #fff; padding: 40px; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); width: 100%; }
+        .logo-box { background: #eef1f6; border-radius: 12px; padding: 18px; text-align: center; margin-bottom: 30px; }
+        .logo-box img { max-height: 60px; object-fit: contain; }
+        .company-row { display: flex; align-items: center; gap: 12px; }
+        .upload-icon { background: #0d6efd; color: #fff; border-radius: 8px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+        .btn-signup { background: #d77af7; border: none; color: white; padding: 12px; border-radius: 10px; font-weight: 600; margin-top: 10px; }
+        .btn-signup:hover { background: #c15ae6; }
+        .signin-text { text-align: center; margin-top: 18px; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="d-flex justify-content-center align-items-center min-vh-100 px-2">
+    <div class="signup-box">
+        <div class="logo-box">
+            <img src="logo.png" id="logoPreview" alt="Logo">
+        </div>
+
+        <form id="signupForm">
+            <div class="mb-1">
+                <label>Company Name</label>
+                <div class="company-row">
+                    <input type="text" class="form-control" placeholder="Enter company name">
+                    <label class="upload-icon">
+                        <i class="fas fa-upload"></i>
+                        <input type="file" hidden onchange="previewLogo(event)">
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-1">
+                <label>Name</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Your full name" required>
+            </div>
+
+            <div class="mb-1">
+                <label>Email</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="example@email.com" required>
+            </div>
+
+            <div class="mb-1">
+                <label>Phone</label>
+                <input type="tel" class="form-control" id="phone" name="phone" maxlength="10" oninput="validatePhone(this)" required>
+                <small class="text-danger d-none" id="phoneError">Please enter numbers only</small>
+            </div>
+
+            <div class="mb-1">
+                <label>Password</label>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="password" name="pwd" required>
+                    <span class="input-group-text bg-white" onclick="togglePassword('password', this)">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="mb-1">
+                <label>Confirm Password</label>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="confirmPassword" required>
+                    <span class="input-group-text bg-white" onclick="togglePassword('confirmPassword', this)">
+                        <i class="fas fa-eye"></i>
+                    </span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-signup w-100">Sign Up</button>
+        </form>
+
+        <div class="signin-text">
+            Already have an account? <a href="login.html">Sign In</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePassword(id, icon) {
+        const field = document.getElementById(id);
+        const i = icon.querySelector("i");
+        field.type = field.type === "password" ? "text" : "password";
+        i.classList.toggle("fa-eye");
+        i.classList.toggle("fa-eye-slash");
+    }
+
+    function previewLogo(event) {
+        const reader = new FileReader();
+        reader.onload = () => document.getElementById("logoPreview").src = reader.result;
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function validatePhone(input) {
+        input.value = input.value.replace(/[^0-9]/g, '');
+        const error = document.getElementById("phoneError");
+        error.classList.toggle("d-none", /^\d*$/.test(input.value));
+    }
+
+    const form = document.getElementById("signupForm");
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const pwd = document.getElementById("password").value;
+        const confirmPwd = document.getElementById("confirmPassword").value;
+
+        if (pwd !== confirmPwd) {
+            alert("Passwords do not match!");
+            return;
+        }
+
+        const data = {
+            name: document.getElementById("name").value.trim(),
+            email: document.getElementById("email").value.trim(),
+            phone: document.getElementById("phone").value.trim(),
+            pwd: pwd
+        };
+
+        try {
+            const response = await fetch("/submit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.text();
+
+            if (response.ok) {
+                // 'result' is the URL sent by the server (/dash?role=Employee)
+                window.location.href = result; 
+            } else {
+                alert("Error: " + result);
+            }
+        } catch (err) {
+            alert("Connection error to server.");
+        }
+    });
+</script>
+</body>
+</html>
